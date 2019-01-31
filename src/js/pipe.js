@@ -78,8 +78,6 @@ export default class Pipe{
         for(let i in startDir){
             connection[startDir[i]] = 1;
         }
-
-
         //Add additional random connections     
         for(let i in connection){
             if(connection[i] == 0){
@@ -89,8 +87,6 @@ export default class Pipe{
                 }
             }
         }
-     
         this.connections.push(connection);
     }
-
 }

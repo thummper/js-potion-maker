@@ -9,44 +9,58 @@ import Producer from "./producer.js";
 class PotionMaker {
 
     constructor(canvas) {
+        this.fillButton = document.getElementById("flow-button");
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
         this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
-
-
         this.w = this.canvas.width;
         this.h = this.canvas.height;
-
-
         this.cellS = 50;
         this.gridSize, this.colP, this.rowP, this.grid, this.hoverCell;
-
         this.mx, this.my = null;
         this.hoverCell = [];
         this.connectionList = [];
         this.primary = {
-            Red: '#990033',
-            Blue: '#31639c',
-            Yellow: '#fce903',
+            red: '#990033',
+            blue: '#0e4bef',
+            yellow: '#fce903',
         };
         this.secondry = {
-            Purple: '#6a2d62',
-            Green: '#49b675',
-            Orange: '#fc9303',
-            Brown: '#663300', // All
-        }
-
+            purple: '#656731', // R + B
+            green: '#49b675',  // B + Y 
+            orange: '#fc9303', // R + Y 
+            brown: '#1c74cd2', // All
+        };
+        this.activeColors = [];
+         
 
         this.makeConnectionList();
         this.addListeners();
         this.start();
         this.makeGrid();
+        this.flowPipes();
         this.loop();
-        this.pathCols = ['red', 'blue', 'green', 'white', 'purple', 'teal'];
 
+    }
 
-
+    fixActiveColors(){
+        let clearArr = [...new Set(this.activeColors)];
+        let newArr = [];
+        console.log("Active colors: ", clearArr);
+        for(let i in clearArr){
+            for(let j = i; j < clearArr.length; j++){
+                let combined = this.generateColor(new Set([clearArr[i], clearArr[j]]));
+                if(combined !== this.secondry.brown){
+                    newArr.push(combined);
+                }
+            }
+        }
+        console.log("Combined: ", newArr);
+        
+        clearArr = clearArr.concat(newArr);
+        let cleanCombined = [...new Set(clearArr)];
+        console.log("Final active colors: ", cleanCombined);
     }
 
     makeConnectionList() {
@@ -79,6 +93,38 @@ class PotionMaker {
         this.connectionList[7].push([3, 'ul']);
     }
 
+    generateColor(colors){
+        //Passed a set of hex codes with length > 1 (so we know there are at least 2 unique elements).
+        let color = "#1c74cd2";
+        if(colors.size == this.primary.length){
+            //All colours in here once, return brown.
+            color = this.secondry.brown;
+        } else {
+            // Combination of 2 colours.
+            let possibleCombos = [
+                new Set([this.primary.red, this.primary.blue]),
+                new Set([this.primary.blue, this.primary.yellow]),
+                new Set([this.primary.red, this.primary.yellow]),
+            ];
+            for(let i in possibleCombos){
+                let possSet = possibleCombos[i];
+                let equal = this.eqSet(possSet, colors);
+                if(equal){
+                    let scols = this.secondry;
+                    color = scols[Object.keys(scols)[i]];
+                }
+            }
+        }
+        console.log("Generated Colours: ", color);
+        return color;
+    }
+
+    eqSet(as, bs) {
+        if (as.size !== bs.size) return false;
+        for (var a of as) if (!bs.has(a)) return false;
+        return true;
+    }
+
     loop() {
         this.checkHover();
         this.clearGrid();
@@ -101,18 +147,22 @@ class PotionMaker {
         this.canvas.addEventListener("click", function () {
             this.checkClick();
         }.bind(this));
+        //Flow button
+        this.fillButton.addEventListener("click", function(){
+            console.log("Fill button pressed");
+        }.bind(this));
     }
 
     checkClick() {
         if (this.hoverCell != null && this.hoverCell.length == 2) {
             //We are hovering something - click it.
             let hov = this.hoverCell;
-            console.log("HOVER: ", hov);
             let clickedCell = this.grid[hov[0]][hov[1]];
             clickedCell.pipe.rotate();
             this.flowPipes();
         }
     }
+
     flowPipes() {
         let grid = this.grid;
         let pipes = [];
@@ -146,7 +196,7 @@ class PotionMaker {
         paths.sort(function (a, b) {
             return (b[0].length + b[1].length + b[2].length) - (a[0].length + a[1].length + a[2].length);
         });
-        let colNum = this.pathCols.length - 1;
+
         for (let i in paths) {
             let path = paths[i];
             let pipes = path[0];
@@ -154,16 +204,16 @@ class PotionMaker {
             let producers = path[2];
 
             if(producers.length > 0){
-                console.log("Path: ", path);
                 //There are producers on the path. 
-                let prodColors = [];
-                let color = "black";
+                let prodColors = new Set();
+                let color = this.secondry.brown;
                 for(let i in producers){
-                    prodColors.push(producers[i].color);
+                    prodColors.add(producers[i].color);
                 }
-                console.log("Prod colours: ", prodColors);
-                if(prodColors.length == 1){
-                    color = prodColors[0];
+                if(prodColors.size > 1){
+                    color = this.generateColor(prodColors);
+                } else {
+                    color = prodColors.values().next().value;
                 }
                 for(let i in pipes){
                     pipes[i].color = color;
@@ -177,14 +227,10 @@ class PotionMaker {
                 }
             }
         }
-
-
-
     }
 
     getSurrounding(pipe, row, col) {
         let surroundingPipes = [];
-
         //indexes for above, below, right, left, diag left up, diag left down, diag down right, diag up right
         let possilbeInd = [
             [row - 1, col, 'u'],
@@ -196,6 +242,7 @@ class PotionMaker {
             [row + 1, col + 1, 'dr'],
             [row - 1, col + 1, 'ur']
         ];
+
         for (let i in possilbeInd) {
             let pair = possilbeInd[i];
             let keysExist = this.testIndex(pair);
@@ -268,7 +315,6 @@ class PotionMaker {
                 connections = connections.concat(moreConnections);
             }
         }
-        //console.log("PATH: ", pipes.length + consumers.length + producers.length, " Producers: ", producers);
         return [pipes, consumers, producers];
     }
 
@@ -412,6 +458,10 @@ class PotionMaker {
                 if (row == 0) {
                     let producer = new Producer();
                     producer.pickColor(this.primary, this.secondry);
+                    if(producer.produces){
+                        this.activeColors.push(producer.color);
+                        this.fixActiveColors();
+                    }
                     cell = {
                         x: x + (this.cellS * col),
                         y: y + (this.cellS * row),
@@ -421,7 +471,7 @@ class PotionMaker {
                 } else if (row == this.gridSize - 1) {
                     let consumer = new Consumer();
                     consumer.init();
-                    consumer.pickColor(this.primary, this.secondry);
+                    consumer.pickColor(this.activeColors);
                     cell = {
                         x: x + (this.cellS * col),
                         y: y + (this.cellS * row),
@@ -442,8 +492,10 @@ class PotionMaker {
                 rw.push(cell);
             }
             grid.push(rw);
+            
         }
         this.grid = grid;
+       
     }
 
     clearGrid() {
@@ -466,21 +518,18 @@ class PotionMaker {
                     ctx.fillStyle = cell.pipe.color;
                     ctx.fillRect(cell.x, cell.y, size, size);
                 }
-
                 if(cell.consumer){
                     ctx.fillStyle = cell.consumer.color;
                     ctx.fillRect(cell.x, cell.y, cell.size, cell.size);
                     ctx.fillStyle = "white";
                     ctx.fillText(cell.consumer.level, cell.x + size / 2, cell.y + size / 2);
                 }
-
                 if(cell.producer){
                     ctx.fillStyle = cell.producer.color;
                     ctx.fillRect(cell.x, cell.y, size, size);
                     ctx.fillStyle = "white";
                     ctx.fillText("P", cell.x + size / 2, cell.y + size / 2);
                 }
-
                 if (hover != null && i == hover[0] && j == hover[1]) {
                     ctx.fillStyle = "orange";
                     ctx.fillRect(cell.x, cell.y, size, size);
@@ -495,14 +544,10 @@ class PotionMaker {
     }
 }
 
-
-
-
 //Returns x random directions
 export function randomDirections(number) {
     let directions = [0, 1, 2, 3, 4, 5, 6, 7];
     let randomdirs = [];
-
     for (let i = 0; i < number; i++) {
         let index = Math.floor(Math.random() * directions.length);
         randomdirs.push(directions[index]);
@@ -517,13 +562,9 @@ export function randomProperty(obj){
     return obj[keys[ keys.length * Math.random() << 0]];
 }
 
-
-
-
 export function randomNumber(number, min, max, signed) {
     // Generates {number} random numbers, between min and max, signed if provided.
     let numbers = [];
-
     let ok = true;
     while (ok) {
         numbers = [];
@@ -550,15 +591,8 @@ export function weightedRand(spec) {
             table.push(i);
         }
     }
-
     return table[Math.floor(Math.random() * table.length)];
-
 }
-
-
-
-
-
 
 var potionInst = null;
 window.addEventListener("load", function () {

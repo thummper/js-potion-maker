@@ -74,25 +74,16 @@ export default class Consumer {
             //Increase difficulty
             this.increaseDiff();
         }
-        this.level = weightedRand(this.chance);
-        console.log("Random Level: ", this.level);
+        this.level = weightedRand(this.chance); 
         // Higer current values lead to higher levels (and potentially more value)
     }
 
-    pickColor(primary, secondry){
-        let colType = randomNumber(1, 1, 2, 0);
-        console.log("COL TYPE: ", colType);
-        if(colType == 1){
-            //Prime
-            this.color = randomProperty(primary);
-        } else if(colType == 2){
-            //Second
-            this.color = randomProperty(secondry);
-        }
-        // We should only pick colours that the producers can make 
-        // TODO: some reference to producers.
-        // For now, we will just rando pick a colour.
-        // Given 2 objects of colours
+    pickColor(activeColors){
+        // Not all producers make colours..
+        console.log("Picking from: ", activeColors);
+        let random = randomNumber(1, 0, activeColors.length - 1, 0);
+        console.log("Random: ", random);
+        this.color = activeColors[random];
     }
 }
 

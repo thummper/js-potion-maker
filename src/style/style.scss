@@ -13,10 +13,29 @@ html{
 }
 .canvas-wrapper{
     margin: 12px;
+    display: flex;
+    flex-direction: column;
 }
 #main-canvas{
     border-radius: 4px;
     width: 500px;
     height: 600px;
     background: #f2f2f2;
+}
+#flow-button{
+    display: block;
+    padding: 4px;
+    color: white;
+    background: #990033;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin: 12px 0;
+    user-select: none;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+    transition: all 0.3s;
+    &:hover{
+        background: darken(#990033, 15)
+    }
 }
