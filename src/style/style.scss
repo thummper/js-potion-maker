@@ -1,0 +1,22 @@
+*{
+    border: 0;
+    margin: 0;
+}
+body, html{
+    height: 100%;
+}
+html{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.canvas-wrapper{
+    margin: 12px;
+}
+#main-canvas{
+    border-radius: 4px;
+    width: 500px;
+    height: 600px;
+    background: #f2f2f2;
+}
