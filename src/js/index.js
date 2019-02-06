@@ -9,6 +9,8 @@ import Producer from "./producer.js";
 class PotionMaker {
 
     constructor(canvas) {
+
+        this.difficulty = 0;
         this.fillButton = document.getElementById("flow-button");
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
@@ -41,6 +43,7 @@ class PotionMaker {
         this.makeGrid();
         this.flowPipes();
         this.loop();
+        this.paths = []; //Store paths for pipe filling.
 
     }
 
@@ -115,7 +118,6 @@ class PotionMaker {
                 }
             }
         }
-        console.log("Generated Colours: ", color);
         return color;
     }
 
@@ -150,6 +152,7 @@ class PotionMaker {
         //Flow button
         this.fillButton.addEventListener("click", function(){
             console.log("Fill button pressed");
+            this.fillPipes();
         }.bind(this));
     }
 
@@ -160,6 +163,34 @@ class PotionMaker {
             let clickedCell = this.grid[hov[0]][hov[1]];
             clickedCell.pipe.rotate();
             this.flowPipes();
+        }
+    }
+
+
+    fillPipes(){
+        let paths = this.paths; 
+        for(let i in this.paths){
+            let path = this.paths[i];
+            let pipes = path[0];
+            let consumers = path[1];
+            let producers = path[2];
+            let color = path[3];
+            if(consumers.length > 0 && producers.length > 0){
+                // For a valid path, we need producers and consumers
+                let counter = 0;
+                for(let i in consumers){
+                    let consumer = consumers[i];
+                    let filled = consumer.fill(color);
+                    if(filled){
+                        counter++;
+                        console.log("Vial completely filled, should be removed");
+                    } else {
+                        //We screwed the vial 
+                        counter--;
+                    }
+                }
+                //Counter is effective levels of vials we have filled
+            }
         }
     }
 
@@ -215,6 +246,9 @@ class PotionMaker {
                 } else {
                     color = prodColors.values().next().value;
                 }
+                path[3] = color;
+
+
                 for(let i in pipes){
                     pipes[i].color = color;
                 }
@@ -227,6 +261,7 @@ class PotionMaker {
                 }
             }
         }
+        this.paths = paths;
     }
 
     getSurrounding(pipe, row, col) {
@@ -470,7 +505,7 @@ class PotionMaker {
                     }
                 } else if (row == this.gridSize - 1) {
                     let consumer = new Consumer();
-                    consumer.init();
+                    consumer.init(this.difficulty);
                     consumer.pickColor(this.activeColors);
                     cell = {
                         x: x + (this.cellS * col),

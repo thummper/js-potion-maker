@@ -7,17 +7,39 @@ export default class Consumer {
         this.chance = this.baseChance;
         this.level, this.color, this.value = null;
         this.connected = false;
+        this.ruined = false;
         this.connections = [[1 , 0 , 0 , 0 , 0 , 0 , 0, 0]];
-        this.init();
     }
 
-    init() {
+    init(difficulty) {
         /* 
         Pick level, colors and value
         value depends on color and level
         */
         // TODO: Currently not managing current, will pass 0 for now 
-       this.pickLevel(0);
+       this.pickLevel(difficulty);
+    }
+
+    fill(color){
+        if(color == this.color && !this.ruined){
+            console.log("Should successfully fill consumer");
+            this.level -= 1;
+            if(this.level == 0){
+                console.log("Vial has been completed");
+                return true;
+            }
+            //Match!
+        } else {
+            console.log("Consumer should be ruined");
+            this.destroy();
+            return false;
+            //Runied the vial 
+        }
+    }
+
+    destroy(){
+        //When a vial is destoryed, it clogs up the bottom of the screen.
+        this.ruined = true;
     }
 
     increaseDiff() {
