@@ -1,0 +1,60 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scripts/gameWindow.gd" type="Script" id=1]
+[ext_resource path="res://art/background.png" type="Texture" id=2]
+[ext_resource path="res://scripts/gridHolder.gd" type="Script" id=3]
+
+[node name="gameWindow" type="Node2D"]
+script = ExtResource( 1 )
+tileSize = 60
+
+[node name="background" type="TextureRect" parent="."]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="gridLayer" type="CanvasLayer" parent="."]
+
+[node name="gridHolder" type="Control" parent="gridLayer"]
+anchor_left = 0.01
+anchor_top = 0.01
+anchor_right = 0.99
+anchor_bottom = 0.99
+mouse_filter = 2
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": true,
+"_editor_description_": "
+"
+}
+
+[node name="sourceHolder" type="Control" parent="gridLayer/gridHolder"]
+anchor_right = 1.0
+margin_bottom = 60.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="pipeHolder" type="Control" parent="gridLayer/gridHolder"]
+anchor_right = 1.0
+anchor_bottom = 0.9
+margin_top = 60.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="bottleHolder" type="Control" parent="gridLayer/gridHolder"]
+anchor_top = 0.9
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": true
+}

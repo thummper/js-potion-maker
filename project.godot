@@ -16,8 +16,17 @@ _global_script_class_icons={
 [application]
 
 config/name="Potion- Maker"
+run/main_scene="res://scenes/gameWindow.tscn"
 config/icon="res://icon.png"
+
+[display]
+
+window/size/width=860
+window/size/height=740
+window/size/resizable=false
+window/handheld/orientation="portrait"
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+quality/2d/use_pixel_snap=true
+environment/default_environment="res://scenes/default_env.tres"
