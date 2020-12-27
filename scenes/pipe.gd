@@ -4,10 +4,11 @@ onready var pipeSprite = $Sprite
 signal pipeRotated
 
 
-var connections   = []
-var sources       = []
-var bottles       = []
-var pipeColour    = Color(1, 0, 0)
+var connections     = []
+var sources         = []
+var bottles         = []
+var openConnections = null
+var pipeColour      = Color(1, 0, 0)
 
 
 

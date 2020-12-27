@@ -3,14 +3,10 @@ extends Control
 var sourceInfo = []
 var pipeInfo   = []
 var bottleInfo = []
+var source     = preload("res://scenes/source.tscn")
+var pipe       = preload("res://scenes/pipe.tscn")
 
-
-var source = preload("res://scenes/source.tscn")
-var pipe   = preload("res://scenes/pipe.tscn")
-
-export var weirdPadding = 9
-
-
+export var weirdPadding  = 9
 onready var sourceHolder = $sourceHolder
 onready var pipeHolder   = $pipeHolder
 onready var bottleHolder = $bottleHolder
@@ -21,6 +17,14 @@ func checkConnections():
 	# So for each pipe, generate their connections
 	print("Check connections called, a pipe has been rotated")
 	
+	# Because my data stucture sucks, generate a list of indices where pipes exist
+	var realPipes = {}
+	for i in range(pipeInfo.size()):
+		var info = pipeInfo[i]
+		var gridIndex = info[0]
+		realPipes[gridIndex] = i
+		
+	
 	for info in pipeInfo:
 		var gridIndex = info[0]
 		var pipe      = info[1]
@@ -29,9 +33,37 @@ func checkConnections():
 		pipe.sources     = []
 		pipe.bottles     = []
 		
-
-	
-
+		
+		# Get pipe's current open connections
+		var openConnections = pipe.openConnections
+		# Get pipe: LU, LD, U, D, RU, RD and check if there is a connection
+		
+		var left  = Vector2( gridIndex.x - 1, gridIndex.y)
+		var right = Vector2( gridIndex.x + 1, gridIndex.y)
+		
+		var lu    = Vector2( left.x, left.y - 1)
+		var ld    = Vector2( left.x, left.y + 1)
+		var ru    = Vector2( right.x, right.y - 1)
+		var rd    = Vector2( right.x, right.y + 1)
+		var above = Vector2( gridIndex.x, gridIndex.y - 1)
+		var below = Vector2( gridIndex.x, gridIndex.y + 1)
+		
+		if realPipes.has(lu):
+			print("LU")
+		if realPipes.has(ld):
+			print("LD")
+		if realPipes.has(ru):
+			print("RU")
+		if realPipes.has(rd):
+			print("RD")
+		if realPipes.has(above):
+			print("ABV")
+		if realPipes.has(below):
+			print("BLW")
+		
+		
+		
+		
 
 func addSources(gridStart, gridWidth, tileSize):
 	var startX = gridStart.x
