@@ -10,6 +10,8 @@ var bottles         = []
 var openConnections = null
 var pipeColour      = Color(1, 0, 0)
 
+var pipeIndex       = 0
+var orientation     = 0
 
 
 
@@ -19,22 +21,41 @@ func setColour():
 
 
 func pickPipe():
-	var index = randi() % possiblePipes.size()
-	var textureInfo = possiblePipes[index]
+	pipeIndex = randi() % possiblePipes.size()
+	var textureInfo = possiblePipes[pipeIndex]
 	var texture = textureInfo[0]
 	var hframes = textureInfo[1]
+	
+	
+	
+	orientation = randi() % hframes
+	
 	$Sprite.set_texture(texture)
 	$Sprite.hframes = hframes
-	$Sprite.frame = 0
+	$Sprite.frame = orientation
+	
+	openConnections = pipeConnections[pipeIndex][orientation]
 
 func rotatePipe():
 	var numberFrames = $Sprite.hframes
-	var newFrame = ($Sprite.frame + 1) % numberFrames
-	print("Num: ", newFrame, " Number: ", numberFrames)
-	$Sprite.frame = ($Sprite.frame + 1) % numberFrames
+	orientation = (orientation + 1) % numberFrames
+	$Sprite.frame = orientation
+	openConnections = pipeConnections[pipeIndex][orientation]
+	
+	print(" ORIENTATION: ", orientation, " HF: ", numberFrames)
+	print(" OPEN: ", openConnections)
 	emit_signal("pipeRotated")
 	
 	
+	
+func resetModulate():
+	pipeColour = Color(1, 1, 1, 1)
+	$Sprite.modulate = pipeColour
+	
+func testConnect():
+	resetModulate()
+	pipeColour = Color(1, 0, 0, 1)
+	$Sprite.modulate = pipeColour
 
 func _on_pipe_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.is_pressed():
