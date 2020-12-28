@@ -26,21 +26,26 @@ func calcGridSize():
 	
 	gridPadding  = tileSize / 2
 	
-	var widthFactor = 1.25
+	var widthFactor = 1
 	var totalWidth = gridSize.x 
 	
 	
-	gridWidth    = floor(   totalWidth / (tileSize / widthFactor))
+	gridWidth    = floor(   totalWidth / (tileSize - 9))
 	gridHeight   = floor(  (gridSize.y) / (tileSize / 2))
 	
 	
-	print(" Total width: ", totalWidth, " Taken Width: ", (gridWidth * (tileSize / widthFactor)))
+
 	
-	var remainWidth  = totalWidth - (gridWidth * (tileSize / widthFactor))
+	var takenWidth = gridWidth * (tileSize - 9)
+	
+	var remainWidth  = totalWidth - takenWidth
+	
+	print(" Window Width: ", gridSize.x, " Taken: ", takenWidth, " Remain: ", remainWidth)
+	
 	var remainHeight = gridSize.y - (gridHeight * tileSize) 
 	
-	gridStart    = Vector2(remainWidth / 2, 0)
-	print(" Grid Size: ", gridSize, " Width: ", gridWidth, " Height: ", gridHeight)
+	gridStart    = Vector2(tileSize / 2 + remainWidth / 2, tileSize / 2)
+	
 	
 	
 	
