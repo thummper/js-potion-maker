@@ -216,7 +216,6 @@ func addSources(gridStart, gridWidth, tileSize, weirdPadding):
 		
 func makePipe(x, y, w, h):
 	var gridIndex = Vector2(w, h)
-	print("PIPE AT: ", gridIndex)
 	var newPipe = pipe.instance()
 	newPipe.pickPipe()
 	newPipe.position = Vector2(x, y)

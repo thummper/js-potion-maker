@@ -43,7 +43,6 @@ func pickBottle():
 	colourIndex = possibleBottleColours[ randi() % possibleBottleColours.size()]
 	
 	bottleColour = colourInformation[ colourIndex ]
-	print("Bottle colour: ", bottleColour)
 	$Sprite.modulate = bottleColour
 	
 

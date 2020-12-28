@@ -14,11 +14,23 @@ onready var pipeHolder = $gridLayer/gridHolder/pipeHolder
 
 
 func _ready():
+	registerButtons()
 	calcGridSize()
 	gridHolder.addSources(gridStart, gridWidth, tileSize, weirdPadding)
 	gridHolder.addPipes(gridStart, gridWidth, gridHeight, tileSize, weirdPadding)
 	gridHolder.addBottles(gridStart, gridWidth, gridHeight, tileSize, weirdPadding)
 	
+	
+func registerButtons():
+	var buttons = get_tree().get_nodes_in_group("GameButtons")
+	for button in buttons:
+		var name = button.name
+		if name == "fillButton":
+			button.connect("pressed", self, "fillButtonPressed")
+	
+	
+func fillButtonPressed():
+	print("Fill button pressed")	
 	
 func calcGridSize():
 	var gridSize = pipeHolder.rect_size
