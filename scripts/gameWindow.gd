@@ -7,6 +7,7 @@ var gridWidth
 var gridPadding
 var gridStart 
 export (int)var tileSize
+export var weirdPadding = 9
 
 onready var gridHolder = $gridLayer/gridHolder
 onready var pipeHolder = $gridLayer/gridHolder/pipeHolder
@@ -14,9 +15,9 @@ onready var pipeHolder = $gridLayer/gridHolder/pipeHolder
 
 func _ready():
 	calcGridSize()
-	gridHolder.addSources(gridStart, gridWidth, tileSize)
-	gridHolder.addPipes(gridStart, gridWidth, gridHeight, tileSize)
-	gridHolder.addBottles(gridStart, gridWidth, gridHeight, tileSize)
+	gridHolder.addSources(gridStart, gridWidth, tileSize, weirdPadding)
+	gridHolder.addPipes(gridStart, gridWidth, gridHeight, tileSize, weirdPadding)
+	gridHolder.addBottles(gridStart, gridWidth, gridHeight, tileSize, weirdPadding)
 	
 	
 func calcGridSize():
@@ -30,14 +31,11 @@ func calcGridSize():
 	var totalWidth = gridSize.x 
 	
 	
-	gridWidth    = floor(   totalWidth / (tileSize - 9))
+	gridWidth    = floor(   totalWidth / (tileSize - weirdPadding))
 	gridHeight   = floor(  (gridSize.y) / (tileSize / 2))
 	
 	
-
-	
-	var takenWidth = gridWidth * (tileSize - 9)
-	
+	var takenWidth = gridWidth * (tileSize - weirdPadding)
 	var remainWidth  = totalWidth - takenWidth
 	
 	print(" Window Width: ", gridSize.x, " Taken: ", takenWidth, " Remain: ", remainWidth)

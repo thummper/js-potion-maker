@@ -7,17 +7,14 @@ var source     = preload("res://scenes/source.tscn")
 var pipe       = preload("res://scenes/pipe.tscn")
 var bottle     = preload("res://scenes/bottle.tscn")
 
-export var weirdPadding  = 9
 onready var sourceHolder = $sourceHolder
 onready var pipeHolder   = $pipeHolder
 onready var bottleHolder = $bottleHolder
 
 
-
 func checkConnections():
 	# So for each pipe, generate their connections
 	print("Check connections called, a pipe has been rotated")
-	
 	# Because my data stucture sucks, generate a list of indices where pipes exist
 	var realPipes = {}
 	for i in range(pipeInfo.size()):
@@ -55,16 +52,7 @@ func checkConnections():
 			# THIS PIPE HAS LU OPEN (IND 5)
 			# TEST PIPE HAS RD OPEN (IND 2)
 			var testPipe = pipeInfo[ realPipes[lu] ][1]
-			var testConnections = testPipe.openConnections
-			
-			if openConnections[5] && testConnections[2]:
-				pipe.testConnect()
-				testPipe.testConnect()
-				if ! pipe.connections.has(testPipe):	
-					pipe.connections.push_back(testPipe)
-				if ! testPipe.connections.has(pipe):
-					testPipe.connections.push_back(pipe)
-					
+			testPipeConnection(testPipe, pipe, 5, 2)
 
 		if realPipes.has(ld):
 			# There is a pipe LD from this pipe, 
@@ -73,16 +61,7 @@ func checkConnections():
 			# Test pipe has RU OPEN (IND 1)
 			
 			var testPipe = pipeInfo[ realPipes[ld] ][1]
-			var testConnections = testPipe.openConnections
-			
-			if openConnections[4] && testConnections[1]:
-				pipe.testConnect()
-				testPipe.testConnect()
-				if ! pipe.connections.has(testPipe):
-					pipe.connections.push_back(testPipe)
-				if ! testPipe.connections.has(pipe):
-					testPipe.connections.push_back(pipe)
-			
+			testPipeConnection(testPipe, pipe, 4, 1)
 
 		if realPipes.has(ru):
 			# There is a pipe RU from this pipe
@@ -90,78 +69,90 @@ func checkConnections():
 			# This pipe has RU open (IND 1)
 			# Test pipe has LD open (IND 4)
 			var testPipe = pipeInfo[ realPipes[ru] ][1]
-			var testConnections = testPipe.openConnections
-			
-			if openConnections[1] && testConnections[4]:
-				pipe.testConnect()
-				testPipe.testConnect()
-				if ! pipe.connections.has(testPipe):
-					pipe.connections.push_back(testPipe)
-				if ! testPipe.connections.has(pipe):
-					testPipe.connections.push_back(pipe)
-			
+			testPipeConnection(testPipe, pipe, 1, 4)
+
 		if realPipes.has(rd):
 			# There is a pipe RD from this pipe
 			# Can connect if:
 			# This pipe has RD open (IND 2)
 			# Test pipe has RU open (IND 5)
 			var testPipe = pipeInfo[ realPipes[rd] ][1]
-			var testConnections = testPipe.openConnections
-			
-			if openConnections[2] && testConnections[5]:
-				pipe.testConnect()
-				testPipe.testConnect()
-				if ! pipe.connections.has(testPipe):
-					pipe.connections.push_back(testPipe)
-				if ! testPipe.connections.has(pipe):
-					testPipe.connections.push_back(pipe)
-			
-			
+			testPipeConnection(testPipe, pipe, 2, 5)
+
 		if realPipes.has(above):
 			# There is a pipe above this one
 			# Connects if:
 			# This pipe has above open (IND 0)
 			# Above pipe has below open (IND 3)
 			var testPipe = pipeInfo[ realPipes[above] ][1]
-			var testConnections = testPipe.openConnections
-			
-			if openConnections[0] && testConnections[3]:
-				pipe.testConnect()
-				testPipe.testConnect()
-				if ! pipe.connections.has(testPipe):
-					pipe.connections.push_back(testPipe)
-				if ! testPipe.connections.has(pipe):
-					testPipe.connections.push_back(pipe)
-			
+			testPipeConnection(testPipe, pipe, 0, 3)
+
 		if realPipes.has(below):
 			# There is a pipe below this one
 			# Connects if:
 			# This pipe has below open (IND 3)
 			# Below pipe has above open (IND 0)
 			var testPipe = pipeInfo[ realPipes[below] ][1]
+			testPipeConnection(testPipe, pipe, 3, 0)
+
+		
+	# Add bottles to pipe connections 
+	for info in bottleInfo:
+	
+		var bottleIndex = info[0]
+		var bottle      = info[1]
+		var aboveIndex 
+		bottle.resetModulate()
+		bottle.connections = []
+		# TODO: Need piece to make these bottles align better
+		if int(bottleIndex.x) % 2 == 0:
+			# Above connection is 2 above
+			aboveIndex = Vector2( bottleIndex.x, bottleIndex.y - 2)
+		else:
+			# Below connection is 1 above
+			aboveIndex = Vector2( bottleIndex.x, bottleIndex.y - 1)
+			
+		if realPipes.has(aboveIndex):
+			# There is a pipe above this bottle
+			var testPipe = pipeInfo[ realPipes[aboveIndex] ][1]
+			
 			var testConnections = testPipe.openConnections
-			if openConnections[3] && testConnections[0]:
-				pipe.testConnect()
-				testPipe.testConnect()
-				if ! pipe.connections.has(testPipe):
-					pipe.connections.push_back(testPipe)
-				if ! testPipe.connections.has(pipe):
-					testPipe.connections.push_back(pipe)
+			if testConnections[3]:
+				bottle.testConnect()
+				if ! testPipe.connections.has(bottle):
+					testPipe.connections.push_back(bottle)
+				if ! bottle.connections.has(testPipe):
+					bottle.connections.push_back(testPipe)
+		
+				
+					
+func testPipeConnection(testPipe, pipe, pipeInd, testInd):
+	var openConnections = pipe.openConnections
+	var testConnections = testPipe.openConnections
+	
+	if openConnections[pipeInd] && testConnections[testInd]:
+		pipe.testConnect()
+		testPipe.testConnect()
+		if ! pipe.connections.has(testPipe):
+			pipe.connections.push_back(testPipe)
+		if ! testPipe.connections.has(pipe):
+			testPipe.connections.push_back(pipe)
 		
 		
 		
-func addBottles(gridStart, gridWidth, gridHeight, tileSize):
+		
+func addBottles(gridStart, gridWidth, gridHeight, tileSize, weirdPadding):
 	var startX = gridStart.x
 	for i in range(gridWidth):
 		
-		var bottleInd = Vector2(i, gridHeight - 1)
+		var bottleInd = Vector2(i, gridHeight)
 		var newBottle = bottle.instance()
 		newBottle.position = Vector2( startX, gridStart.y)
 		bottleHolder.add_child(newBottle)
 		bottleInfo.push_back( [bottleInd, newBottle] )
 		startX += tileSize - weirdPadding		
 
-func addSources(gridStart, gridWidth, tileSize):
+func addSources(gridStart, gridWidth, tileSize, weirdPadding):
 	var startX = gridStart.x
 	for i in range(gridWidth):
 		# Make a new source
@@ -185,7 +176,7 @@ func makePipe(x, y, w, h):
 	pipeInfo.push_back( [ gridIndex, newPipe ])
 	
 		
-func addPipes(gridStart, gridWidth, gridHeight, tileSize):
+func addPipes(gridStart, gridWidth, gridHeight, tileSize, weirdPadding):
 	var baseStart = gridStart.x
 	var altStart  = gridStart.x + tileSize
 	var baseHeight = gridStart.y
@@ -204,42 +195,8 @@ func addPipes(gridStart, gridWidth, gridHeight, tileSize):
 			else:
 				if w % 2 != 0:
 					makePipe(x, y, w, h)
-				
-			
 
 			x += (tileSize - weirdPadding)
 		y += (tileSize / 2)
 
-	
-	
-	
-
-	
-	
-#	for i in range(gridHeight):
-#		var width  = gridWidth
-#		var x      = baseStart
-#		var altRow = false
-#		var modVal = 2
-#
-#
-#
-#		
-#			altRow = true
-#			modVal = 3
-#			width = shortWidth
-#			x     = shortStart
-#
-#		for j in range(width):
-#			# Make pipe
-#
-#			if j % modVal == 0:
-#
-#				var newPipe = pipe.instance()
-#				var pipeInd = Vector2(i, j)
-#				newPipe.position = Vector2(x, startY)
-#				pipeHolder.add_child(newPipe)
-#				pipeInfo.push_back( [pipeInd, newPipe])
-#			x += tileSize
-#		startY += tileSize
 
