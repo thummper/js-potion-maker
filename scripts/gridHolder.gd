@@ -104,6 +104,7 @@ func checkConnections():
 		var aboveIndex 
 		bottle.resetModulate()
 		bottle.connections = []
+		bottle.sources     = []
 		# TODO: Need piece to make these bottles align better
 		if int(bottleIndex.x) % 2 == 0:
 			# Above connection is 2 above
@@ -157,7 +158,12 @@ func checkConnections():
 			if ! pipe.sources.has(source):
 				pipe.sources.push_back(source)
 
-				
+	
+	for info in bottleInfo:
+		var bottle = info[1]
+		bottle.pickColor()
+
+
 	for info in pipeInfo:
 		var pipe = info[1]
 		pipe.pickColor()
