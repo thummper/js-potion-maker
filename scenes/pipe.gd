@@ -46,7 +46,25 @@ func rotatePipe():
 	print(" OPEN: ", openConnections)
 	emit_signal("pipeRotated")
 	
-	
+
+
+func pickColor():
+	pipeColour = Color(1, 1, 1, 1)
+	if sources.size() > 0:
+		# Pipe has associated sources
+		var sourceColours = []
+		for source in sources:
+			sourceColours.push_back( source.colourIndex )
+		var nonDupeColours = []
+		for colour in sourceColours:
+			if nonDupeColours.find(colour) == -1:
+				nonDupeColours.push_back(colour)
+		var summedColours = 0
+		for colour in nonDupeColours:
+			summedColours += colour
+		pipeColour = colourInformation[summedColours]	
+	$Sprite.modulate = pipeColour
+
 	
 func resetModulate():
 	pipeColour = Color(1, 1, 1, 1)

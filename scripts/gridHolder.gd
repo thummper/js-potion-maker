@@ -124,6 +124,46 @@ func checkConnections():
 				if ! bottle.connections.has(testPipe):
 					bottle.connections.push_back(testPipe)
 		
+	# Add sources to connections 
+
+	for info in sourceInfo:
+
+		var path = []
+		var connectedPipes = []
+
+		var sourceIndex = info[0]
+		var source      = info[1]
+
+		# Below is +2 because of the grid structure 
+		var below      = Vector2(sourceIndex.x, sourceIndex.y + 2)
+
+		if realPipes.has(below):
+			var testPipe = pipeInfo[ realPipes[below] ][1]
+			# If below pipe has top open 
+			if testPipe.openConnections[0]:
+				connectedPipes.push_back(testPipe)
+		
+		while connectedPipes.size() > 0:
+			var testPipe = connectedPipes.pop_front()
+			if ! path.has(testPipe):
+				path.append(testPipe)
+
+			var pipeConnections = testPipe.connections
+			for connPipe in pipeConnections:
+				if !path.has(connPipe):
+					connectedPipes.push_back(connPipe)
+		
+		for pipe in path:
+			if ! pipe.sources.has(source):
+				pipe.sources.push_back(source)
+
+				
+	for info in pipeInfo:
+		var pipe = info[1]
+		pipe.pickColor()
+
+
+
 				
 					
 func testPipeConnection(testPipe, pipe, pipeInd, testInd):
@@ -148,6 +188,7 @@ func addBottles(gridStart, gridWidth, gridHeight, tileSize, weirdPadding):
 		var bottleInd = Vector2(i, gridHeight)
 		var newBottle = bottle.instance()
 		newBottle.position = Vector2( startX, gridStart.y)
+		newBottle.pickBottle()
 		bottleHolder.add_child(newBottle)
 		bottleInfo.push_back( [bottleInd, newBottle] )
 		startX += tileSize - weirdPadding		
@@ -157,8 +198,9 @@ func addSources(gridStart, gridWidth, tileSize, weirdPadding):
 	for i in range(gridWidth):
 		# Make a new source
 		if i % 2 == 0:
-			var sourceInd = Vector2(i, 0)
+			var sourceInd = Vector2(i, -1)
 			var newSource = source.instance()
+			newSource.pickSource()
 			newSource.position = Vector2( startX, gridStart.y + tileSize / 2)
 			sourceHolder.add_child(newSource)
 			sourceInfo.push_back( [sourceInd, newSource])
@@ -168,6 +210,7 @@ func addSources(gridStart, gridWidth, tileSize, weirdPadding):
 		
 func makePipe(x, y, w, h):
 	var gridIndex = Vector2(w, h)
+	print("PIPE AT: ", gridIndex)
 	var newPipe = pipe.instance()
 	newPipe.pickPipe()
 	newPipe.position = Vector2(x, y)

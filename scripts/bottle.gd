@@ -4,11 +4,13 @@ extends "res://scripts/tile.gd"
 var bottleType   = 0
 var bottleColour = 0
 var connections  = []
+var sources      = []
+var colourIndex 
 
 
 
 func resetModulate():
-	bottleColour = Color(1, 1, 1, 1)
+	bottleColour = colourInformation[ possibleBottleColours[colourIndex] ]
 	$Sprite.modulate = bottleColour
 	
 func testConnect():
@@ -21,3 +23,10 @@ func pickBottle():
 	bottleType     = randi() % numBottles
 	$Sprite.frame  = bottleType
 	# TODO: Also pick colour here
+	colourIndex = randi() % possibleBottleColours.size()
+	
+	bottleColour = colourInformation[ possibleBottleColours[colourIndex] ]
+	print("Bottle colour: ", bottleColour)
+	$Sprite.modulate = bottleColour
+	
+

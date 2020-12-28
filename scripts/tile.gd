@@ -113,6 +113,20 @@ var pipeConnections = [
 	],
 ]
 
+var possibleBottleColours = [1, 4, 8, 12, 5, 9, 13]
+var possibleSourceColours = [1, 4, 8] # Will be longer 
+var colourInformation = {
+	# Primary 
+	1 : Color("#A60522"), #Red
+	4 : Color("#0439D9"), #Blue
+	8 : Color("#F2B705"), #Yellow
+	# Combos 
+	12: Color("#04D924"), #Green
+	5 : Color("#562f7e"), #Purple
+	9 : Color("#e3622f"), #Orange
+	13: Color("#663300") #Brown
+}
+
 
 
 
