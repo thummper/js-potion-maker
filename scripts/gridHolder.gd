@@ -5,6 +5,7 @@ var pipeInfo   = []
 var bottleInfo = []
 var source     = preload("res://scenes/source.tscn")
 var pipe       = preload("res://scenes/pipe.tscn")
+var bottle     = preload("res://scenes/bottle.tscn")
 
 export var weirdPadding  = 9
 onready var sourceHolder = $sourceHolder
@@ -149,7 +150,16 @@ func checkConnections():
 		
 		
 		
+func addBottles(gridStart, gridWidth, gridHeight, tileSize):
+	var startX = gridStart.x
+	for i in range(gridWidth):
 		
+		var bottleInd = Vector2(i, gridHeight - 1)
+		var newBottle = bottle.instance()
+		newBottle.position = Vector2( startX, gridStart.y)
+		bottleHolder.add_child(newBottle)
+		bottleInfo.push_back( [bottleInd, newBottle] )
+		startX += tileSize - weirdPadding		
 
 func addSources(gridStart, gridWidth, tileSize):
 	var startX = gridStart.x
@@ -167,7 +177,6 @@ func addSources(gridStart, gridWidth, tileSize):
 		
 func makePipe(x, y, w, h):
 	var gridIndex = Vector2(w, h)
-	print("Grid index: ", gridIndex)
 	var newPipe = pipe.instance()
 	newPipe.pickPipe()
 	newPipe.position = Vector2(x, y)

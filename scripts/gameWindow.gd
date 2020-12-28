@@ -16,14 +16,30 @@ func _ready():
 	calcGridSize()
 	gridHolder.addSources(gridStart, gridWidth, tileSize)
 	gridHolder.addPipes(gridStart, gridWidth, gridHeight, tileSize)
+	gridHolder.addBottles(gridStart, gridWidth, gridHeight, tileSize)
 	
 	
 func calcGridSize():
 	var gridSize = pipeHolder.rect_size
+	
+
+	
 	gridPadding  = tileSize / 2
-	gridWidth    = floor(  (gridSize.x - (gridPadding * 2)) / tileSize)
+	
+	var widthFactor = 1.25
+	var totalWidth = gridSize.x 
+	
+	
+	gridWidth    = floor(   totalWidth / (tileSize / widthFactor))
 	gridHeight   = floor(  (gridSize.y) / (tileSize / 2))
-	gridStart    = Vector2( tileSize / 2 + gridPadding, tileSize / 2 + gridPadding)
+	
+	
+	print(" Total width: ", totalWidth, " Taken Width: ", (gridWidth * (tileSize / widthFactor)))
+	
+	var remainWidth  = totalWidth - (gridWidth * (tileSize / widthFactor))
+	var remainHeight = gridSize.y - (gridHeight * tileSize) 
+	
+	gridStart    = Vector2(remainWidth / 2, 0)
 	print(" Grid Size: ", gridSize, " Width: ", gridWidth, " Height: ", gridHeight)
 	
 	

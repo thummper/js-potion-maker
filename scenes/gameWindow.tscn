@@ -21,10 +21,10 @@ __meta__ = {
 [node name="gridLayer" type="CanvasLayer" parent="."]
 
 [node name="gridHolder" type="Control" parent="gridLayer"]
-anchor_left = 0.01
-anchor_top = 0.01
-anchor_right = 0.99
-anchor_bottom = 0.99
+anchor_left = 0.1
+anchor_top = 0.05
+anchor_right = 0.9
+anchor_bottom = 0.95
 mouse_filter = 2
 script = ExtResource( 3 )
 __meta__ = {
