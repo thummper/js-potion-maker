@@ -12,6 +12,31 @@ onready var pipeHolder   = $pipeHolder
 onready var bottleHolder = $bottleHolder
 
 
+func getFillableBottles():
+	var fillable = []
+	for info in bottleInfo:
+		var bottle = info[1]
+		if bottle.sources.size() > 0:
+			fillable.push_back(bottle)
+	return fillable
+
+
+func fillBottles(): 
+	checkConnections()
+	var fillableBottles = getFillableBottles()
+	
+	var succFill = 0
+	for bottle in fillableBottles:
+		bottle.fill()
+		if !bottle.broken:
+			# If bottle is not broken after we have filled it, then it is a succfill
+			succFill += 1
+			
+	
+	
+	
+
+
 func checkConnections():
 	# So for each pipe, generate their connections
 	print("Check connections called, a pipe has been rotated")

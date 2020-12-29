@@ -31,6 +31,7 @@ func registerButtons():
 	
 func fillButtonPressed():
 	print("Fill button pressed")	
+	$gridLayer/gridHolder.fillBottles()
 	
 func calcGridSize():
 	var gridSize = pipeHolder.rect_size

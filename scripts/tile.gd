@@ -14,6 +14,7 @@ var possiblePipes = [
 	[preload("res://art/TRI.png"), 2],
 	[preload("res://art/ALLA.png"), 1]
 ]
+var brokenSprite = preload("res://art/brokenBottle.png")
 
 
 # Connections in the form:
@@ -124,7 +125,8 @@ var colourInformation = {
 	12: Color("#04D924"), #Green
 	5 : Color("#562f7e"), #Purple
 	9 : Color("#e3622f"), #Orange
-	13: Color("#663300") #Brown
+	13: Color("#663300"), #Brown
+	20: Color('#39FF14')
 }
 
 
